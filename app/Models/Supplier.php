@@ -16,4 +16,10 @@ class Supplier extends Model
         'description',
         'amount',
     ];
+
+    // Relación muchos a muchos con Supply
+    public function supplies()
+    {
+        return $this->belongsToMany(Supply::class)->withPivot('amount');
+    }
 }

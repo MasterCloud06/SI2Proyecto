@@ -15,7 +15,6 @@
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" rel="stylesheet">
 
-    <!-- Styles adicionales -->
     <style>
         body {
             font-family: 'Nunito', sans-serif;
@@ -57,105 +56,84 @@
             left: 0;
         }
 
-        .btn-create-event {
-            background-color: #4F46E5;
-            color: white;
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.5rem;
-            display: inline-block;
-            font-size: 1rem;
-            font-weight: bold;
-            transition: background-color 0.3s ease;
+        .footer-section {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 20px;
         }
 
-        .btn-create-event:hover {
-            background-color: #4338CA;
+        .footer-section h3 {
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-section a {
+            display: block;
+            margin-bottom: 0.3rem;
+            color: #4F46E5;
+            transition: color 0.3s ease;
+        }
+
+        .footer-section a:hover {
+            color: #4338CA;
         }
     </style>
 </head>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
 <body class="bg-gray-100 dark:bg-gray-900 min-h-screen flex flex-col">
 
-    <!-- Header -->
-    <header class="bg-white dark:bg-gray-800 shadow-lg sticky top-0 z-50 transition-colors duration-300">
+    <header class="bg-white dark:bg-gray-800 shadow-md sticky top-0 z-50">
         <div class="container mx-auto px-6 py-4 flex justify-between items-center">
-            <a href="/"
-                class="text-3xl font-bold text-gray-900 dark:text-gray-100 hover:text-blue-500 transition-colors duration-300">
-                Mi Aplicación
-            </a>
-            <nav>
-                <ul class="flex space-x-8 items-center">
+            <div class="flex items-center space-x-8">
+                <a href="/"
+                    class="text-3xl font-bold text-gray-900 dark:text-white hover:text-blue-500 transition duration-300">
+                    Mi Aplicación
+                </a>
+
+                <div class="hidden md:flex space-x-6">
+                    <!-- Mostrar el botón Inicio solo a usuarios autenticados -->
                     @auth
-                        <!--
-                        <li>
-                            <a href="{{ route('dashboard') }}"
-                                class="text-lg text-gray-800 dark:text-gray-200 hover:text-blue-500 transition-colors duration-300">
-                                Dashboard
-                            </a>
-                        </li>
-                        --->
-                        @if(Auth::user()->role === 'admin')
-                            <li>
-                                <a href="{{ route('events.index') }}"
-                                    class="text-lg text-gray-800 dark:text-gray-200 hover:text-blue-500 transition-colors duration-300">
-                                    Eventos
-                                </a>
-                            </li>
-                        @endif
-                        <li>
-                            <a href="{{ route('profile.index') }}"
-                                class="text-lg text-gray-800 dark:text-gray-200 hover:text-blue-500 transition-colors duration-300">
-                                Perfil
-                            </a>
-                        </li>
-                        @if(Auth::user()->role === 'admin')
-                            <li>
-                                <a href="{{ route('users.index') }}"
-                                    class="text-lg text-gray-800 dark:text-gray-200 hover:text-blue-500 transition-colors duration-300">
-                                    Usuarios
-                                </a>
-                            </li>
-                        @endif
-                        @if(Auth::user()->role === 'admin')
-                            <li>
-                                <a href="{{ route('suppliers.index') }}"
-                                    class="text-lg text-gray-800 dark:text-gray-200 hover:text-blue-500 transition-colors duration-300">
-                                    Proveedores
-                                </a>
-                            </li>
-                        @endif
-                        @if(Auth::user()->role === 'admin')
-                            <li>
-                                <a href="{{ route('employers.index') }}"
-                                    class="text-lg text-gray-800 dark:text-gray-200 hover:text-blue-500 transition-colors duration-300">
-                                    Empleadores
-                                </a>
-                            </li>
-                        @endif
-                        <li>
-                            <form method="POST" action="{{ route('logout') }}" class="inline">
-                                @csrf
-                                <button type="submit" class="btn-primary">
-                                    Cerrar Sesión
-                                </button>
-                            </form>
-                        </li>
-                    @else
-                        <li>
-                            <a href="{{ route('login') }}"
-                                class="text-lg text-gray-800 dark:text-gray-200 hover:text-blue-500 transition-colors duration-300">
-                                Iniciar Sesión
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{{ route('register') }}"
-                                class="text-lg text-gray-800 dark:text-gray-200 hover:text-blue-500 transition-colors duration-300">
-                                Registrarse
-                            </a>
-                        </li>
+                        <a href="{{ route('home') }}"
+                            class="text-gray-700 dark:text-gray-300 hover:text-blue-500 transition duration-300">
+                            Inicio
+                        </a>
                     @endauth
-                </ul>
-            </nav>
+
+                    @auth
+                        @if(Auth::user()->role === 'admin')
+                            <a href="{{ route('events.index') }}"
+                                class="text-gray-700 dark:text-gray-300 hover:text-blue-500">Eventos</a>
+                            <a href="{{ route('suppliers.index') }}"
+                                class="text-gray-700 dark:text-gray-300 hover:text-blue-500">Proveedores</a>
+                            <a href="{{ route('employers.index') }}"
+                                class="text-gray-700 dark:text-gray-300 hover:text-blue-500">Empleadores</a>
+                            <a href="{{ route('supplies.index') }}"
+                                class="text-gray-700 dark:text-gray-300 hover:text-blue-500">Suministros</a>
+                            <a href="{{ route('users.index') }}"
+                                class="text-gray-700 dark:text-gray-300 hover:text-blue-500 transition duration-300">
+                                Gestionar Usuarios
+                            </a>
+                        @endif
+                    @endauth
+                </div>
+            </div>
+
+            <div class="flex items-center space-x-4">
+                @auth
+                    <a href="{{ route('profile.index') }}"
+                        class="text-gray-700 dark:text-gray-300 hover:text-blue-500">Perfil</a>
+                    <form method="POST" action="{{ route('logout') }}" class="inline">
+                        @csrf
+                        <button type="submit" class="btn-primary">Cerrar Sesión</button>
+                    </form>
+                @else
+                    <a href="{{ route('login') }}" class="text-gray-700 dark:text-gray-300 hover:text-blue-500">Iniciar
+                        Sesión</a>
+                    <a href="{{ route('register') }}"
+                        class="text-gray-700 dark:text-gray-300 hover:text-blue-500">Registrarse</a>
+                @endauth
+            </div>
         </div>
     </header>
 
@@ -165,11 +143,54 @@
     </main>
 
     <!-- Footer -->
-    <footer class="bg-white dark:bg-gray-800 shadow-lg py-6">
-        <div class="container mx-auto text-center text-gray-600 dark:text-gray-400">
-            <p>© 2024 Mi Aplicación. Todos los derechos reservados.</p>
+    <footer class="bg-gray-50 dark:bg-gray-800 shadow-inner py-10">
+        <div
+            class="container mx-auto footer-section text-gray-700 dark:text-gray-300 grid gap-8 md:grid-cols-5 sm:grid-cols-2 px-4">
+            <div>
+                <h3 class="text-lg font-semibold mb-4">Producto</h3>
+                <a href="#">Gestión de Eventos</a>
+                <a href="#">Presupuestos</a>
+                <a href="#">Reportes</a>
+                <a href="#">Calendario</a>
+            </div>
+            <div>
+                <h3 class="text-lg font-semibold mb-4">Soluciones</h3>
+                <a href="#">Organización de Bodas</a>
+                <a href="#">Fiestas y Celebraciones</a>
+                <a href="#">Conferencias</a>
+                <a href="#">Producción de Eventos</a>
+            </div>
+            <div>
+                <h3 class="text-lg font-semibold mb-4">Aprende</h3>
+                <a href="#">Blog</a>
+                <a href="#">Tutoriales</a>
+                <a href="#">Soporte</a>
+            </div>
+            <div>
+                <h3 class="text-lg font-semibold mb-4">Soporte</h3>
+                <a href="#">Centro de Ayuda</a>
+                <a href="#">Contacto</a>
+                <a href="#">Preguntas Frecuentes</a>
+            </div>
+            <div>
+                <h3 class="text-lg font-semibold mb-4">Empresa</h3>
+                <a href="#">Sobre Nosotros</a>
+                <a href="#">Política de Privacidad</a>
+                <a href="#">Términos de Uso</a>
+            </div>
+        </div>
+
+        <div class="container mx-auto text-center mt-10">
+            <div class="flex justify-center space-x-6 mb-4">
+                <a href="#" class="text-blue-600 hover:text-blue-800"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" class="text-blue-400 hover:text-blue-600"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="text-pink-500 hover:text-pink-700"><i class="fab fa-instagram"></i></a>
+                <a href="#" class="text-red-600 hover:text-red-800"><i class="fab fa-youtube"></i></a>
+            </div>
+            <p class="text-sm text-gray-500 dark:text-gray-400">© 2024 Mi Aplicación. Todos los derechos reservados.</p>
         </div>
     </footer>
+
 </body>
 
 </html>

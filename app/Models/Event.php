@@ -13,6 +13,11 @@ class Event extends Model
         'name',
         'description',
         'event_date',
+        'location',
+        'capacity',
+        'category',
+        'price',
+        'image_path',  // Asegúrate de usar el campo correcto para la imagen
         'user_id',  // Relacionar el evento con el creador (usuario)
     ];
 

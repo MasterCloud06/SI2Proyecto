@@ -3,13 +3,13 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Bitacora;
+use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
 {
     /**
-     * Create a new controller instance.
-     *
-     * @return void
+     * Asegura que solo usuarios autenticados accedan.
      */
     public function __construct()
     {
@@ -17,12 +17,22 @@ class HomeController extends Controller
     }
 
     /**
-     * Show the application dashboard.
+     * Muestra el dashboard de la aplicación.
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function index()
     {
-        return view('home');
+        $user = Auth::user();
+
+        // Obtener las bitácoras solo si el usuario es administrador
+        $bitacoras = $user->role === 'admin'
+            ? Bitacora::with('user')->orderBy('fecha_hora', 'desc')->get()
+            : [];
+
+        return view('home', [
+            'bitacoras' => $bitacoras,
+            'user' => $user,
+        ]);
     }
 }

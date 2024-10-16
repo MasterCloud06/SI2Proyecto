@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\Role; // Importamos el modelo Role
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
@@ -18,34 +19,46 @@ class UserController extends Controller
     // Método para crear un nuevo usuario
     public function create()
     {
-        $roles = Role::all(); // Obtenemos todos los roles disponibles
-        return view('users.create', compact('roles')); // Devolvemos la vista para crear usuarios con los roles disponibles
+        $roles = Role::all(); // Cargar todos los roles
+        return view('users.create', compact('roles')); // Pasar los roles a la vista
     }
 
-    // Método para almacenar un nuevo usuario con roles opcionales
+    // Método para almacenar un nuevo usuario con un rol asignado
     public function store(Request $request)
     {
-        $validatedData = $request->validate([
-            'name' => 'required',
-            'email' => 'required|email|unique:users',
-            'password' => 'required',
-            'roles' => 'array', // Validamos que los roles sean un array
+        // Validación de los datos de entrada
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|min:8',
+            'role' => 'required|exists:roles,id'
         ]);
 
-        // Creamos el usuario
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        // Almacenar los datos validados en una variable
+        $validatedData = $validator->validated();
+
+        // Crear el usuario
         $user = User::create([
             'name' => $validatedData['name'],
             'email' => $validatedData['email'],
             'password' => bcrypt($validatedData['password']),
         ]);
 
-        // Si se seleccionaron roles, los asignamos al usuario
-        if (!empty($validatedData['roles'])) {
-            $user->roles()->sync($validatedData['roles']);
-        }
+        // Asignar el rol al usuario
+        $user->roles()->attach($validatedData['role']);
 
-        return redirect()->route('users.index')->with('success', 'Usuario creado y roles asignados correctamente.');
+        return redirect()->route('users.index')
+            ->with('success', 'Usuario creado con éxito.');
     }
+
+
+
 
     // Método para mostrar un usuario específico con sus roles
     public function show($id)

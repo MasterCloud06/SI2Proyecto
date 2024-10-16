@@ -14,9 +14,14 @@ return new class extends Migration
         Schema::create('events', function (Blueprint $table) {
             $table->id();  // ID del evento
             $table->string('name');  // Nombre del evento
-            $table->text('description')->nullable();  // Descripción del evento (opcional)
+            $table->text('description')->nullable();  // Descripción del evento
             $table->date('event_date');  // Fecha del evento
-            $table->timestamps();  // Timestamps automáticos (created_at, updated_at)
+            $table->string('location')->nullable();  // Ubicación del evento
+            $table->integer('capacity')->nullable();  // Capacidad máxima
+            $table->string('category');  // Categoría del evento
+            $table->decimal('price', 8, 2)->default(0);  // Precio del evento
+            $table->string('image_path')->nullable();  // Nombre del archivo de la imagen
+            $table->timestamps();  // created_at, updated_at
         });
     }
 
@@ -25,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('events');  // Eliminar la tabla si existe
+        Schema::dropIfExists('events');
     }
 };

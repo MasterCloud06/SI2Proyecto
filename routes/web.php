@@ -7,12 +7,19 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\EmployerController;
+use App\Http\Controllers\SupplyController;
+use App\Http\Controllers\HomeController;
 
-// Ruta de bienvenida (cargar los eventos correctamente desde el controlador)
-Route::get('/', [EventController::class, 'welcome'])->name('home');
 
-// Ruta para la página de Home que pasa los eventos al usuario autenticado
-Route::get('/', [EventController::class, 'welcome'])->middleware('auth')->name('home');
+
+// Ruta de bienvenida o home (maneja tanto usuarios autenticados como invitados)
+Route::get('/', [EventController::class, 'welcome'])
+    ->name('welcome');
+
+// Grupo para usuarios autenticados (maneja la página /home con eventos)
+Route::get('/home', function () {
+    return view('home');
+})->name('home');
 
 
 // Ruta del dashboard (solo accesible para usuarios autenticados y verificados)
@@ -67,6 +74,13 @@ Route::middleware('auth')->group(function () {
     Route::resource('employers', EmployerController::class);
 });
 
+// Rutas para los suministros del inventario
+Route::middleware('auth')->group(function () {
+Route::resource('supplies', SupplyController::class);
+});
+
+
+Route::get('/home', [HomeController::class, 'index'])->name('home');
 // Incluye las rutas de autenticación de Laravel (login, registro, etc.)
 require __DIR__.'/auth.php';
 
