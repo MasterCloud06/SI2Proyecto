@@ -13,5 +13,12 @@ class Event extends Model
         'name',
         'description',
         'event_date',
+        'user_id',  // Relacionar el evento con el creador (usuario)
     ];
+
+    // Relación con el modelo User
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

@@ -12,11 +12,9 @@ class ProfileController extends Controller
         // Obtener el usuario autenticado
         $user = Auth::user();
 
-        // Mostrar los datos del usuario para comprobar
-        dd($user);
+        // Retornar la vista del perfil con los datos del usuario
+        return view('profile.index', compact('user'));
     }
-
-
 
     public function edit()
     {
@@ -31,7 +29,6 @@ class ProfileController extends Controller
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255',
-            // Puedes agregar más campos según tu estructura
         ]);
 
         // Actualizar la información del usuario

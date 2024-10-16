@@ -28,66 +28,88 @@ class SupplierController extends Controller
      * Store a newly created supplier in storage.
      */
     public function store(Request $request)
-{
-    // Validar la solicitud
-    $request->validate([
-        'name' => 'required|string|max:255',
-        'email' => 'required|string|email|max:255|unique:suppliers',
-    ]);
-
-    try {
-        // Crear el proveedor
-        Supplier::create([
-            'name' => $request->name,
-            'email' => $request->email,
+    {
+        // Validar la solicitud
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:suppliers',
+            'phone' => 'nullable|string|max:50',
+            'description' => 'nullable|string',
+            'amount' => 'nullable|numeric',
         ]);
 
-        // Redireccionar con mensaje de éxito
-        return redirect()->route('suppliers.index')->with('success', 'Proveedor creado correctamente.');
-    } catch (\Exception $e) {
-        // Redireccionar con mensaje de error
-        return redirect()->back()->with('error', 'Hubo un problema al crear el proveedor: ' . $e->getMessage());
-    }
-}
+        try {
+            // Crear el proveedor
+            Supplier::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'phone' => $request->phone,
+                'description' => $request->description,
+                'amount' => $request->amount,
+            ]);
 
-    /**
-     * Display the specified supplier.
-     */
-    public function show(Supplier $supplier)
-    {
-        return view('suppliers.show', compact('supplier'));
+            // Redireccionar con mensaje de éxito
+            return redirect()->route('suppliers.index')->with('success', 'Proveedor creado correctamente.');
+        } catch (\Exception $e) {
+            // Redireccionar con mensaje de error
+            return redirect()->route('suppliers.create')->with('error', 'Error al crear el proveedor: ' . $e->getMessage());
+        }
     }
 
     /**
      * Show the form for editing the specified supplier.
      */
-    public function edit(Supplier $supplier)
+    public function edit($id)
     {
+        $supplier = Supplier::findOrFail($id);
         return view('suppliers.edit', compact('supplier'));
     }
 
     /**
      * Update the specified supplier in storage.
      */
-    public function update(Request $request, Supplier $supplier)
+    public function update(Request $request, $id)
     {
+        // Validar la solicitud
         $request->validate([
-            'name' => 'required',
-            'email' => 'required|email|unique:suppliers,email,' . $supplier->id,
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:suppliers,email,' . $id,
+            'phone' => 'nullable|string|max:50',
+            'description' => 'nullable|string',
+            'amount' => 'nullable|numeric',
         ]);
 
-        $supplier->update($request->all());
+        $supplier = Supplier::findOrFail($id);
 
-        return redirect()->route('suppliers.index')->with('success', 'Supplier updated successfully.');
+        try {
+            // Actualizar el proveedor
+            $supplier->update($request->only(['name', 'email', 'phone', 'description', 'amount']));
+            return redirect()->route('suppliers.index')->with('success', 'Proveedor actualizado correctamente.');
+        } catch (\Exception $e) {
+            return redirect()->route('suppliers.edit', $id)->with('error', 'Error al actualizar el proveedor: ' . $e->getMessage());
+        }
     }
 
     /**
      * Remove the specified supplier from storage.
      */
-    public function destroy(Supplier $supplier)
+    public function destroy($id)
     {
-        $supplier->delete();
+        $supplier = Supplier::findOrFail($id);
+        try {
+            $supplier->delete();
+            return redirect()->route('suppliers.index')->with('success', 'Proveedor eliminado correctamente.');
+        } catch (\Exception $e) {
+            return redirect()->route('suppliers.index')->with('error', 'Error al eliminar el proveedor: ' . $e->getMessage());
+        }
+    }
 
-        return redirect()->route('suppliers.index')->with('success', 'Supplier deleted successfully.');
+    /**
+     * Display the specified supplier.
+     */
+    public function show($id)
+    {
+        $supplier = Supplier::findOrFail($id);
+        return view('suppliers.show', compact('supplier'));
     }
 }

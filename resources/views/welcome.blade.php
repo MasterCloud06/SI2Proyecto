@@ -1,26 +1,72 @@
-{{-- resources/views --}}
 @extends('layouts.app')
 
-@section('title', 'Eventos')
-''
+@section('title', 'Bienvenido')
+
 @section('content')
-    <div class="mt-8">
-        <h2 class="text-2xl font-bold text-center">Lista de Eventos</h2>
-        <div class="grid gap-6 lg:grid-cols-2 lg:gap-8 mt-8">
-            @forelse($events as $event)
-                <div class="flex flex-col items-start gap-4 rounded-lg bg-white p-6 shadow-md transition duration-300 hover:text-black/70 hover:ring-black/20 focus:outline-none focus-visible:ring-[#FF2D20] dark:bg-zinc-900">
-                    <h2 class="text-xl font-semibold text-black dark:text-white">{{ $event->name }}</h2>
-                    <p class="mt-4 text-sm/relaxed">
-                        {{ $event->description }}
+    <div class="flex flex-col items-center justify-center h-screen bg-gradient-to-r from-blue-400 to-blue-600">
+        <div class="bg-white rounded-lg shadow-lg p-8 max-w-2xl text-center">
+            <h1 class="text-4xl font-bold mb-4 text-gray-800">¡Bienvenido a nuestra página de eventos!</h1>
+
+            {{-- Verificación de autenticación --}}
+            @guest
+                {{-- Contenido para personas no autenticadas --}}
+                <p class="text-gray-600 mb-6">
+                    Por favor, <a href="{{ route('login') }}" class="text-blue-500 underline">inicia sesión</a> para consultar tu presupuesto y crear eventos increíbles.
+                </p>
+            @else
+                {{-- Verificar rol del usuario autenticado --}}
+                @if(Auth::user()->role === 'user')
+                    {{-- Contenido para usuarios con rol "user" --}}
+                    <p class="text-gray-600 mb-6">
+                        Bienvenido, {{ Auth::user()->name }}. Aquí están tus eventos disponibles:
                     </p>
-                    <p class="text-gray-600 dark:text-gray-400">Fecha del Evento: {{ $event->event_date }}</p>
-                </div>
-            @empty
-                <p class="text-center">No hay eventos creados todavía.</p>
-            @endforelse
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        @foreach($events as $event)
+                            <div class="bg-gray-100 rounded-lg shadow p-4">
+                                <img src="{{ $event->image_url ?? '/path-to-default-image.jpg' }}"
+                                     alt="{{ $event->name }}"
+                                     class="w-full h-48 object-cover rounded-lg mb-4">
+                                <h2 class="text-xl font-semibold text-gray-700">{{ $event->name }}</h2>
+                                <p>{{ $event->description }}</p>
+                                <p class="text-gray-500 text-sm">Fecha del evento: {{ $event->event_date }}</p>
+                            </div>
+                        @endforeach
+                    </div>
+                @elseif(Auth::user()->role === 'admin')
+                    {{-- Contenido para administradores con rol "admin" --}}
+                    <p class="text-gray-600 mb-6">
+                        Bienvenido, administrador {{ Auth::user()->name }}. Aquí puedes gestionar los eventos:
+                    </p>
+                    <a href="{{ route('events.create') }}" class="bg-blue-500 text-white px-4 py-2 rounded-lg">
+                        Crear nuevo evento
+                    </a>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                        @foreach($events as $event)
+                            <div class="bg-gray-100 rounded-lg shadow p-4">
+                                <img src="{{ $event->image_url ?? '/path-to-default-image.jpg' }}"
+                                     alt="{{ $event->name }}"
+                                     class="w-full h-48 object-cover rounded-lg mb-4">
+                                <h2 class="text-xl font-semibold text-gray-700">{{ $event->name }}</h2>
+                                <p>{{ $event->description }}</p>
+                                <p class="text-gray-500 text-sm">Fecha del evento: {{ $event->event_date }}</p>
+                                <div class="mt-4 flex justify-end space-x-2">
+                                    <a href="{{ route('events.edit', $event->id) }}" class="text-blue-500 underline">
+                                        Editar
+                                    </a>
+                                    <form action="{{ route('events.destroy', $event->id) }}" method="POST">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="text-red-500 underline">Eliminar</button>
+                                    </form>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                @else
+                    {{-- En caso de que el rol no sea reconocido --}}
+                    <p class="text-red-500">Rol desconocido: {{ Auth::user()->role }}.</p>
+                @endif
+            @endguest
         </div>
     </div>
-    <h1 class="text-3xl font-semibold text-center">Acerca de Nosotros</h1>
-    <p class="mt-4 text-center">Esta es una aplicación desarrollada para gestionar eventos de manera eficiente.</p>
-
 @endsection

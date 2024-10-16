@@ -58,4 +58,13 @@ class User extends Authenticatable
     {
         return $this->roles()->where('name', $role)->exists();
     }
+
+    /**
+     * Relación entre el usuario y los eventos.
+     * Un usuario puede crear varios eventos.
+     */
+    public function events()
+    {
+        return $this->hasMany(Event::class);
+    }
 }

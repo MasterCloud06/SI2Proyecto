@@ -44,13 +44,6 @@ public function authenticate(): void
 {
     $this->ensureIsNotRateLimited();
 
-    // Intenta autenticar con el modelo Persona primero
-    $personas = Persona::where('email', $this->email)->first();
-    if ($personas && Hash::check($this->password, $personas->password)) {
-        Auth::login($personas);
-        return;
-    }
-
     // Luego intenta autenticar con el modelo User
    if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
         RateLimiter::hit($this->throttleKey());

@@ -6,15 +6,14 @@ use App\Http\Controllers\EventController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SupplierController;
+use App\Http\Controllers\EmployerController;
 
-// Ruta de bienvenida
-Route::get('/', [EventController::class, 'index'])->name('home');
+// Ruta de bienvenida (cargar los eventos correctamente desde el controlador)
+Route::get('/', [EventController::class, 'welcome'])->name('home');
 
 // Ruta para la página de Home que pasa los eventos al usuario autenticado
-Route::get('/home', [EventController::class, 'home'])->middleware('auth')->name('home');
+Route::get('/', [EventController::class, 'welcome'])->middleware('auth')->name('home');
 
-// Ruta para la página de Acerca de Nosotros que pasa los eventos
-Route::get('/about', [EventController::class, 'about'])->name('about');
 
 // Ruta del dashboard (solo accesible para usuarios autenticados y verificados)
 Route::get('/dashboard', function () {
@@ -46,18 +45,27 @@ Route::middleware('auth')->group(function () {
 });
 
 // Rutas para gestionar eventos
+// Rutas para gestionar eventos
 Route::middleware('auth')->group(function () {
     Route::get('/events', [EventController::class, 'index'])->name('events.index');
     Route::get('/events/create', [EventController::class, 'create'])->name('events.create');
     Route::post('/events', [EventController::class, 'store'])->name('events.store');
     Route::get('/events/{event}', [EventController::class, 'show'])->name('events.show');
     Route::get('/events/{event}/edit', [EventController::class, 'edit'])->name('events.edit');
-    Route::patch('/events/{event}', [EventController::class, 'update'])->name('events.update');
+    Route::patch('/events/{event}', [EventController::class, 'update'])->name('events.update'); // PATCH para actualización
     Route::delete('/events/{event}', [EventController::class, 'destroy'])->name('events.destroy');
 });
 
+
 // Rutas para proveedores
-Route::resource('suppliers', SupplierController::class);
+Route::middleware('auth')->group(function () {
+    Route::resource('suppliers', SupplierController::class);
+});
+
+// Rutas para empleadores
+Route::middleware('auth')->group(function () {
+    Route::resource('employers', EmployerController::class);
+});
 
 // Incluye las rutas de autenticación de Laravel (login, registro, etc.)
 require __DIR__.'/auth.php';

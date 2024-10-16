@@ -7,81 +7,90 @@ use Illuminate\Http\Request;
 
 class EventController extends Controller
 {
-    public function index()
+    /**
+     * Mostrar la página de bienvenida con todos los eventos.
+     */
+    public function welcome()
     {
-        // Obtener todos los eventos ordenados por fecha de evento
+        // Obtener todos los eventos ordenados por fecha ascendente
         $events = Event::orderBy('event_date', 'asc')->get();
-        return view('events.index', compact('events')); // Cambiado a 'events.index'
+
+        // Retornar la vista desde 'resources/views/welcome.blade.php'
+        return view('welcome', compact('events'));
     }
 
+    /**
+     * Mostrar la página principal para el usuario autenticado con sus eventos.
+     */
+    public function home()
+    {
+        // Obtener todos los eventos disponibles
+        $events = Event::orderBy('event_date', 'asc')->get();
+
+        return view('home', compact('events'));
+    }
+
+    /**
+     * Listar todos los eventos en el índice de eventos.
+     */
+    public function index()
+    {
+        $events = Event::orderBy('event_date', 'asc')->get();
+
+        return view('events.index', compact('events'));
+    }
+
+    /**
+     * Mostrar el formulario para crear un nuevo evento.
+     */
     public function create()
     {
         return view('events.create');
     }
 
-    public function store(Request $request)
+    public function edit($id)
     {
-        // Validación de los datos del formulario
-        $validatedData = $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'event_date' => 'required|date'
-        ]);
+        // Buscar el evento por su ID
+        $event = Event::findOrFail($id);
 
-        // Crear un nuevo evento
-        Event::create($validatedData);
-
-        return redirect()->route('events.index')->with('success', 'Evento creado con éxito.');
-    }
-
-    public function show(Event $event)
-    {
-        return view('events.show', compact('event'));
-    }
-
-    public function edit(Event $event)
-    {
+        // Retornar la vista de edición con los datos del evento
         return view('events.edit', compact('event'));
     }
 
-    public function update(Request $request, Event $event)
+    public function update(Request $request, $id)
     {
-        // Validación de los datos del formulario
+        // Validación del formulario
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'event_date' => 'required|date'
+            'event_date' => 'required|date',
         ]);
 
-        // Actualizar el evento existente
+        // Buscar el evento y actualizarlo
+        $event = Event::findOrFail($id);
         $event->update($validatedData);
 
+        // Redirigir al índice de eventos con un mensaje de éxito
         return redirect()->route('events.index')->with('success', 'Evento actualizado con éxito.');
     }
 
-    public function destroy(Event $event)
+
+
+    /**
+     * Almacenar un evento recién creado en la base de datos.
+     */
+    public function store(Request $request)
     {
-        // Eliminar el evento
-        $event->delete();
+        // Validación del formulario
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'event_date' => 'required|date',
+        ]);
 
-        return redirect()->route('events.index')->with('success', 'Evento eliminado con éxito.');
-    }
+        // Crear un nuevo evento en la base de datos
+        Event::create($validatedData);
 
-    // Nuevo método para pasar los eventos a la página about
-    public function about()
-    {
-        // Obtener todos los eventos
-        $events = Event::all();
-
-        // Pasar los eventos a la vista about
-        return view('about', compact('events'));
-    }
-    public function home()
-    {
-        // Obtener todos los eventos
-        $events = Event::all();
-
-        // Pasar los eventos a la vista home
-        return view('home', compact('events'));
+        return redirect()->route('events.index')->with('success', 'Evento creado con éxito.');
     }
 }
