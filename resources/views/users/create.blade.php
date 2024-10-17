@@ -6,7 +6,6 @@
 <div class="container mx-auto py-8">
     <h1 class="text-2xl font-bold mb-6">Crear Nuevo Usuario</h1>
 
-    <!-- Formulario para crear un nuevo usuario -->
     <form action="{{ route('users.store') }}" method="POST">
         @csrf
 
@@ -53,7 +52,6 @@
                 <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
             @enderror
         </div>
-
 
         <!-- Botón para enviar el formulario -->
         <div>

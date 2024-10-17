@@ -96,7 +96,7 @@
                     @auth
                         <a href="{{ route('home') }}"
                             class="text-gray-700 dark:text-gray-300 hover:text-blue-500 transition duration-300">
-                            Inicio
+                              Inicio
                         </a>
                     @endauth
 

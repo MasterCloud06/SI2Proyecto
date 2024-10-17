@@ -3,48 +3,62 @@
 @section('title', 'Lista de Usuarios')
 
 @section('content')
-    <div class="container mx-auto py-8">
-        <h1 class="text-2xl font-bold mb-6">Lista de Usuarios</h1>
+<div class="container mx-auto py-12 px-6">
+    <div class="flex items-center justify-between mb-8">
+        <h1 class="text-3xl font-extrabold text-gray-800 dark:text-white">Lista de Usuarios</h1>
+        <a href="{{ route('users.create') }}"
+           class="bg-gradient-to-r from-blue-500 to-indigo-500 text-white px-6 py-2 rounded-lg shadow-lg hover:shadow-xl hover:from-indigo-500 hover:to-blue-500 transition duration-300">
+           + Crear Usuario
+        </a>
+    </div>
 
-        <!-- Botón para crear un nuevo usuario -->
-        <div class="mb-6">
-            <a href="{{ route('users.create') }}" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-300">
-                Crear Usuario
-            </a>
+    @if(session('success'))
+        <div class="mb-6 p-4 bg-green-100 border border-green-400 text-green-700 rounded-lg">
+            {{ session('success') }}
         </div>
+    @endif
 
-        <!-- Tabla de usuarios -->
-        <table class="min-w-full bg-white dark:bg-gray-800 shadow-md rounded-lg">
-            <thead>
+    <div class="overflow-hidden rounded-lg shadow-md">
+        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+            <thead class="bg-gray-50 dark:bg-gray-700">
                 <tr>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Correo Electrónico</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
+                    @foreach(['Nombre', 'Correo Electrónico', 'Acciones'] as $header)
+                        <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600 dark:text-gray-200 uppercase tracking-wider">
+                            {{ $header }}
+                        </th>
+                    @endforeach
                 </tr>
             </thead>
-            <tbody>
-                @foreach($users as $user)
-                    <tr>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">{{ $user->name }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{{ $user->email }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
-                            <!-- Botón para editar el usuario -->
-                            <a href="{{ route('users.edit', $user->id) }}" class="text-green-500 hover:text-green-700 transition-colors duration-300 mr-4">
+            <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                @forelse($users as $user)
+                    <tr class="hover:bg-gray-100 dark:hover:bg-gray-900 transition">
+                        <td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-100">{{ $user->name }}</td>
+                        <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-300">{{ $user->email }}</td>
+                        <td class="px-6 py-4 text-sm flex items-center space-x-4">
+                            <a href="{{ route('users.edit', $user->id) }}"
+                               class="text-blue-500 hover:text-blue-700 transition duration-300">
                                 Editar
                             </a>
-
-                            <!-- Botón para eliminar el usuario -->
                             <form action="{{ route('users.destroy', $user->id) }}" method="POST" class="inline-block">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="text-red-500 hover:text-red-700 transition-colors duration-300" onclick="return confirm('¿Estás seguro de que deseas eliminar este usuario?');">
+                                <button type="submit"
+                                        class="text-red-600 hover:text-red-800 transition duration-300"
+                                        onclick="return confirm('¿Estás seguro de que deseas eliminar este usuario?');">
                                     Eliminar
                                 </button>
                             </form>
                         </td>
                     </tr>
-                @endforeach
+                @empty
+                    <tr>
+                        <td colspan="3" class="text-center py-6 text-gray-500 dark:text-gray-300">
+                            No hay usuarios disponibles.
+                        </td>
+                    </tr>
+                @endforelse
             </tbody>
         </table>
     </div>
+</div>
 @endsection

@@ -10,22 +10,21 @@ use App\Http\Controllers\EmployerController;
 use App\Http\Controllers\SupplyController;
 use App\Http\Controllers\HomeController;
 
-
-
 // Ruta de bienvenida o home (maneja tanto usuarios autenticados como invitados)
-Route::get('/', [EventController::class, 'welcome'])
-    ->name('welcome');
+Route::get('/', [EventController::class, 'welcome'])->name('welcome');
 
-// Grupo para usuarios autenticados (maneja la página /home con eventos)
-Route::get('/home', function () {
-    return view('home');
-})->name('home');
+// Ruta de home (maneja eventos para usuarios autenticados)
+Route::get('/home', [HomeController::class, 'index'])->middleware('auth')->name('home');
 
-
-// Ruta del dashboard (solo accesible para usuarios autenticados y verificados)
+// Dashboard (solo para usuarios autenticados y verificados)
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
+
+// Rutas para eventos (CRUD), solo accesibles para usuarios autenticados
+Route::middleware(['auth'])->group(function () {
+    Route::resource('events', EventController::class);
+});
 
 // Rutas para los roles
 Route::resource('roles', RoleController::class);
@@ -52,7 +51,6 @@ Route::middleware('auth')->group(function () {
 });
 
 // Rutas para gestionar eventos
-// Rutas para gestionar eventos
 Route::middleware('auth')->group(function () {
     Route::get('/events', [EventController::class, 'index'])->name('events.index');
     Route::get('/events/create', [EventController::class, 'create'])->name('events.create');
@@ -76,12 +74,12 @@ Route::middleware('auth')->group(function () {
 
 // Rutas para los suministros del inventario
 Route::middleware('auth')->group(function () {
-Route::resource('supplies', SupplyController::class);
+    Route::resource('supplies', SupplyController::class);
 });
 
 
 Route::get('/home', [HomeController::class, 'index'])->name('home');
 // Incluye las rutas de autenticación de Laravel (login, registro, etc.)
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
 
 Auth::routes();

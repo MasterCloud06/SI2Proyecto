@@ -6,29 +6,19 @@ use Illuminate\Support\Facades\Schema;
 
 class CreateSuppliesTable extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
     public function up()
     {
         Schema::create('supplies', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->decimal('amount', 8, 2);
+            $table->bigIncrements('id');
+            $table->string('name'); // Campo para el nombre del suministro
+            $table->integer('quantity')->nullable(); // Permitir nulos en 'quantity'
+            $table->decimal('amount', 8, 2); // Monto del suministro
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
     public function down()
     {
         Schema::dropIfExists('supplies');
     }
 }
-

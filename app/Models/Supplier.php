@@ -14,12 +14,12 @@ class Supplier extends Model
         'email',
         'phone',
         'description',
-        'amount',
     ];
 
-    // Relación muchos a muchos con Supply
     public function supplies()
     {
-        return $this->belongsToMany(Supply::class)->withPivot('amount');
+        return $this->belongsToMany(Supply::class, 'supplier_supply')
+            ->withPivot('amount') // Incluir la columna amount de la tabla pivote
+            ->withTimestamps(); // Incluir timestamps si los necesitas
     }
 }

@@ -11,9 +11,10 @@ class Supply extends Model
 
     protected $fillable = ['name', 'amount'];
 
-    // Relación muchos a muchos con Supplier
     public function suppliers()
     {
-        return $this->belongsToMany(Supplier::class)->withPivot('amount');
+        return $this->belongsToMany(Supplier::class, 'supplier_supply')
+            ->withPivot('amount') // Incluir la columna amount de la tabla pivote
+            ->withTimestamps(); // Incluir timestamps si los necesitas
     }
 }

@@ -56,9 +56,15 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
             @foreach($events as $event)
                 <div class="relative group bg-white rounded-lg shadow-xl overflow-hidden hover:shadow-2xl transition">
-                    <img src="{{ $event->image_url ?? '/path-to-default-image.jpg' }}"
-                         alt="{{ $event->name }}"
-                         class="w-full h-60 object-cover transition-transform transform group-hover:scale-105 duration-500">
+                    @if($event->image_path)
+                        <img src="{{ asset('storage/' . $event->image_path) }}"
+                             alt="{{ $event->name }}"
+                             class="w-full h-60 object-cover transition-transform transform group-hover:scale-105 duration-500">
+                    @else
+                        <img src="/path-to-default-image.jpg"
+                             alt="Imagen por defecto"
+                             class="w-full h-60 object-cover transition-transform transform group-hover:scale-105 duration-500">
+                    @endif
 
                     <div class="p-6">
                         <h2 class="text-2xl font-bold text-gray-800">{{ $event->name }}</h2>

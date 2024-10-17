@@ -14,6 +14,13 @@
             <p><strong>Monto:</strong> {{ $supplier->amount }}</p>
         </div>
 
+        <h2 class="text-xl font-bold mb-4">Suministros Asociados</h2>
+        <ul class="list-disc pl-5 mb-4">
+            @foreach($supplier->supplies as $supply)
+                <li>{{ $supply->name }} (Cantidad: {{ $supply->pivot->quantity }})</li>
+            @endforeach
+        </ul>
+
         <div class="text-center">
             <a href="{{ route('suppliers.edit', $supplier->id) }}" class="btn-primary">Editar</a>
             <form action="{{ route('suppliers.destroy', $supplier->id) }}" method="POST" class="inline mt-2">
